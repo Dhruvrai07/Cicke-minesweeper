@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+        }
+
+        #game-board {
+            display: grid;
+            grid-template-columns: repeat(6, 50px); /* Change the grid size as needed */
+            gap: 5px;
+            margin: 20px auto;
+        }
+
+        .block {
+            width: 50px;
+            height: 50px;
+            border: 1px solid #ccc;
+            cursor: pointer;
+        }
+
+        #score {
+            margin-top: 20px;
+        }
+    </style>
+    <title>Cricket Game</title>
+</head>
+<body>
+    <h1>Cricket Game</h1>
+    <div id="game-board"></div>
+    <div id="score">Score: <span id="score-value">0</span></div>
+
+    <script>
+        // Function to create a random integer between min and max (inclusive)
+        function getRandomInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        // Function to initialize the game board
+        function initializeGameBoard(rows, columns) {
+            const gameBoard = document.getElementById('game-board');
+
+            for (let i = 0; i < rows * columns; i++) {
+                const block = document.createElement('div');
+                block.classList.add('block');
+                block.setAttribute('data-index', i);
+                block.addEventListener('click', handleBlockClick);
+                gameBoard.appendChild(block);
+            }
+        }
+
+        // Function to distribute fielders randomly on the game board
+        function distributeFielders(fieldersCount) {
+            const blocks = document.querySelectorAll('.block');
+            const fielderIndices = [];
+
+            while (fielderIndices.length < fieldersCount) {
+                const randomIndex = getRandomInt(0, blocks.length - 1);
+
+                if (!fielderIndices.includes(randomIndex)) {
+                    fielderIndices.push(randomIndex);
+                    blocks[randomIndex].classList.add('fielder');
+                }
+            }
+        }
+
+        // Function to handle block click event
+        function handleBlockClick(event) {
+            const clickedBlock = event.target;
+            const isFielder = clickedBlock.classList.contains('fielder');
+
+            if (isFielder) {
+                endGame();
+            } else {
+                updateScore();
+            }
+        }
+
+        // Function to update the score
+        function updateScore() {
+            const scoreElement = document.getElementById('score-value');
+            const currentScore = parseInt(scoreElement.innerText, 10);
+            const newScore = currentScore + getRandomInt(1, 5); // Change scoring logic as needed
+            scoreElement.innerText = newScore;
+        }
+
+        // Function to end the game
+        function endGame() {
+            alert('Game Over! Your final score is: ' + document.getElementById('score-value').innerText);
+            resetGame();
+        }
+
+        // Function to reset the game
+        function resetGame() {
+            const blocks = document.querySelectorAll('.block');
+            blocks.forEach(block => {
+                block.classList.remove('fielder');
+            });
+
+            document.getElementById('score-value').innerText = '0';
+            distributeFielders(11); // Redistribute fielders for a new game
+        }
+
+        // Initialize the game
+        initializeGameBoard(6, 6); // You can change the grid size here
+        distributeFielders(11);
+    </script>
+</body>
+</html>
